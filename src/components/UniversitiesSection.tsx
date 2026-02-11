@@ -1,10 +1,25 @@
 import { universities } from "@/lib/mockData";
 import { MapPin, Award } from "lucide-react";
+import GeometricShapes from "@/components/GeometricShapes";
+import uniMoratuwa from "@/assets/uni-moratuwa.jpg";
+import uniPeradeniya from "@/assets/uni-peradeniya.jpg";
+import uniRuhuna from "@/assets/uni-ruhuna.jpg";
+import uniSjp from "@/assets/uni-sjp.jpg";
+import uniOpen from "@/assets/uni-open.jpg";
+
+const uniImages: Record<string, string> = {
+  "University of Moratuwa": uniMoratuwa,
+  "University of Peradeniya": uniPeradeniya,
+  "University of Ruhuna": uniRuhuna,
+  "University of Sri Jayewardenepura": uniSjp,
+  "Open University of Sri Lanka": uniOpen,
+};
 
 export default function UniversitiesSection() {
   return (
-    <section className="py-20 bg-muted/50 relative">
-      <div className="container">
+    <section className="py-20 bg-muted/50 relative overflow-hidden">
+      <GeometricShapes />
+      <div className="container relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-3">
             Top Engineering <span className="text-gradient-accent">Universities</span>
@@ -17,18 +32,25 @@ export default function UniversitiesSection() {
           {universities.map((u, i) => (
             <div
               key={u.name}
-              className="bg-card rounded-xl border border-border overflow-hidden hover-lift animate-fade-in-up"
+              className="bg-card rounded-xl border border-border overflow-hidden hover-lift animate-fade-in-up group"
               style={{ animationDelay: `${i * 0.1}s` }}
             >
-              <div className="gradient-primary h-3" />
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="font-display font-semibold text-foreground">{u.name}</h3>
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-accent/10 text-accent whitespace-nowrap">
-                    <Award className="h-3 w-3" />
-                    {u.badge}
-                  </span>
-                </div>
+              <div className="relative h-44 overflow-hidden">
+                <img
+                  src={uniImages[u.name]}
+                  alt={u.name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
+                <span className="absolute top-3 right-3 inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-accent text-accent-foreground shadow-lg">
+                  <Award className="h-3 w-3" />
+                  {u.badge}
+                </span>
+                <h3 className="absolute bottom-3 left-4 right-4 font-display font-semibold text-primary-foreground text-lg leading-tight drop-shadow-lg">
+                  {u.name}
+                </h3>
+              </div>
+              <div className="p-5">
                 <p className="text-sm font-medium text-primary mb-2">{u.faculty}</p>
                 <p className="text-sm text-muted-foreground mb-3">{u.description}</p>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">

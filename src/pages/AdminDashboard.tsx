@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/lib/authContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { students, years } from "@/lib/mockData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import {
   LayoutDashboard, Users, Calendar, BookOpen, FileText, Video,
-  Upload, Shield, GraduationCap, Menu, X, ChevronRight,
+  Upload, Shield, GraduationCap, Menu, X, ChevronRight, LogOut,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -23,7 +23,8 @@ const sidebarItems = [
 ];
 
 export default function AdminDashboard() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, logout } = useAuth();
+  const navigate = useNavigate();
   const [sideOpen, setSideOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [yearFilter, setYearFilter] = useState("all");
@@ -33,6 +34,11 @@ export default function AdminDashboard() {
   const filteredStudents = yearFilter === "all"
     ? students
     : students.filter((s) => s.alYear === Number(yearFilter));
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -58,18 +64,27 @@ export default function AdminDashboard() {
             </button>
           ))}
         </nav>
+        <div className="p-3 border-t border-primary-foreground/10">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-primary-foreground/70 hover:bg-destructive/20 hover:text-primary-foreground transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
+        </div>
       </aside>
 
       {/* Mobile sidebar */}
       {sideOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-foreground/50" onClick={() => setSideOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-60 gradient-hero text-primary-foreground animate-slide-in-left">
+          <aside className="absolute left-0 top-0 bottom-0 w-60 gradient-hero text-primary-foreground animate-slide-in-left flex flex-col">
             <div className="p-4 flex items-center justify-between border-b border-primary-foreground/10">
               <span className="font-display font-bold">Admin</span>
               <button onClick={() => setSideOpen(false)}><X className="h-5 w-5" /></button>
             </div>
-            <nav className="p-3 space-y-1">
+            <nav className="flex-1 p-3 space-y-1">
               {sidebarItems.map((item) => (
                 <button
                   key={item.label}
@@ -85,6 +100,15 @@ export default function AdminDashboard() {
                 </button>
               ))}
             </nav>
+            <div className="p-3 border-t border-primary-foreground/10">
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-primary-foreground/70 hover:bg-destructive/20 hover:text-primary-foreground transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            </div>
           </aside>
         </div>
       )}

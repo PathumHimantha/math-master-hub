@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Phone, MessageCircle, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import GeometricShapes from "@/components/GeometricShapes";
 
 export default function ContactSection() {
   const [form, setForm] = useState({ name: "", mobile: "", message: "" });
@@ -15,8 +16,9 @@ export default function ContactSection() {
   };
 
   return (
-    <section className="py-20 bg-muted/50">
-      <div className="container">
+    <section className="py-20 bg-muted/50 relative overflow-hidden">
+      <GeometricShapes />
+      <div className="container relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-3">
             Get In <span className="text-gradient-accent">Touch</span>

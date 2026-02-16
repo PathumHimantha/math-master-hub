@@ -4,14 +4,20 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
 import { years, generateYearContent } from "@/lib/mockData";
 import {
   Download, Eye, Play, Lock, FileText, BookOpen, Video, Trophy, Bell, Star,
-  LayoutDashboard, User, LogOut, Menu, X, GraduationCap,
+  LayoutDashboard, User, LogOut, Menu, X, GraduationCap, ArrowLeft, Calendar,
+  Clock, ChevronRight, Sparkles, TrendingUp,
 } from "lucide-react";
 
 const mathSymbols = ["∫", "Σ", "π", "√", "∞", "Δ", "θ", "λ"];
+
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
 
 function DashboardMathBg() {
   return (
@@ -40,16 +46,32 @@ function DashboardMathBg() {
   );
 }
 
+type DashboardView =
+  | { step: "years" }
+  | { step: "categories"; year: number }
+  | { step: "months"; year: number; category: string }
+  | { step: "weeks"; year: number; category: string; month: string };
+
+const yearMeta: Record<number, { alDate: string; status: string; color: string }> = {
+  2026: { alDate: "August 2026", status: "Active", color: "gradient-primary" },
+  2027: { alDate: "August 2027", status: "Active", color: "gradient-accent" },
+  2028: { alDate: "August 2028", status: "Coming Soon", color: "bg-warning" },
+};
+
+const categories = [
+  { key: "theory", label: "Theory Classes", icon: BookOpen, description: "Structured theory lessons covering Pure & Applied Mathematics", gradient: "gradient-primary" },
+  { key: "paper", label: "Paper Classes", icon: FileText, description: "Past paper discussions and exam technique practice", gradient: "gradient-accent" },
+  { key: "revision", label: "Revision Classes", icon: Video, description: "Intensive revision sessions before examinations", gradient: "bg-warning" },
+];
+
 export default function StudentDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [selectedYear, setSelectedYear] = useState(String(years[0]));
   const [sidebarTab, setSidebarTab] = useState<"dashboard" | "profile">("dashboard");
   const [sideOpen, setSideOpen] = useState(false);
+  const [view, setView] = useState<DashboardView>({ step: "years" });
 
   if (!user) return <Navigate to="/login" />;
-
-  const yearContent = generateYearContent(Number(selectedYear));
 
   const handleLogout = () => {
     logout();
@@ -82,7 +104,7 @@ export default function StudentDashboard() {
         {sidebarItems.map((item) => (
           <button
             key={item.key}
-            onClick={() => { setSidebarTab(item.key); setSideOpen(false); }}
+            onClick={() => { setSidebarTab(item.key); setSideOpen(false); setView({ step: "years" }); }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
               sidebarTab === item.key
                 ? "bg-primary-foreground/20 text-primary-foreground"
@@ -143,12 +165,7 @@ export default function StudentDashboard() {
           {sidebarTab === "profile" ? (
             <ProfileTab user={user} />
           ) : (
-            <DashboardTab
-              user={user}
-              selectedYear={selectedYear}
-              setSelectedYear={setSelectedYear}
-              yearContent={yearContent}
-            />
+            <DashboardContent user={user} view={view} setView={setView} />
           )}
         </main>
       </div>
@@ -208,16 +225,16 @@ function ProfileTab({ user }: { user: any }) {
   );
 }
 
-function DashboardTab({ user, selectedYear, setSelectedYear, yearContent }: any) {
+function DashboardContent({ user, view, setView }: { user: any; view: DashboardView; setView: (v: DashboardView) => void }) {
   return (
     <div className="space-y-6">
-      {/* Welcome */}
+      {/* Welcome - always visible */}
       <div className="animate-fade-in-up">
         <h1 className="text-2xl font-display font-bold text-foreground">
           Welcome, {user.name} 👋
         </h1>
         <p className="text-sm text-muted-foreground">A/L {user.alYear} · {user.district}</p>
-        <div className="flex gap-2 mt-3 flex-wrap">
+        <div className="flex gap-2 mt-2 flex-wrap">
           {user.badges.map((b: string) => (
             <Badge key={b} variant="secondary" className="text-xs gap-1">
               <Star className="h-3 w-3 text-warning" />
@@ -227,74 +244,262 @@ function DashboardTab({ user, selectedYear, setSelectedYear, yearContent }: any)
         </div>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-3 gap-3 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-        {[
-          { icon: Trophy, label: "Progress", value: "72%", color: "text-accent" },
-          { icon: FileText, label: "Papers Done", value: "18", color: "text-primary" },
-          { icon: Bell, label: "Notifications", value: "3", color: "text-warning" },
-        ].map((s) => (
-          <div key={s.label} className="bg-card rounded-xl border border-border p-4 text-center hover-lift group">
-            <s.icon className={`h-5 w-5 mx-auto mb-1 ${s.color} transition-transform duration-300 group-hover:scale-125`} />
-            <div className="text-lg font-display font-bold text-foreground">{s.value}</div>
-            <div className="text-xs text-muted-foreground">{s.label}</div>
+      {/* Breadcrumb navigation */}
+      {view.step !== "years" && (
+        <div className="flex items-center gap-2 text-sm animate-fade-in-up">
+          <button onClick={() => setView({ step: "years" })} className="text-primary hover:underline font-medium">Years</button>
+          {"year" in view && (
+            <>
+              <ChevronRight className="h-3 w-3 text-muted-foreground" />
+              <button
+                onClick={() => setView({ step: "categories", year: view.year })}
+                className={view.step === "categories" ? "text-foreground font-semibold" : "text-primary hover:underline font-medium"}
+              >
+                {view.year} A/L
+              </button>
+            </>
+          )}
+          {(view.step === "months" || view.step === "weeks") && "category" in view && (
+            <>
+              <ChevronRight className="h-3 w-3 text-muted-foreground" />
+              <button
+                onClick={() => setView({ step: "months", year: view.year, category: view.category })}
+                className={view.step === "months" ? "text-foreground font-semibold" : "text-primary hover:underline font-medium"}
+              >
+                {view.category.charAt(0).toUpperCase() + view.category.slice(1)}
+              </button>
+            </>
+          )}
+          {view.step === "weeks" && "month" in view && (
+            <>
+              <ChevronRight className="h-3 w-3 text-muted-foreground" />
+              <span className="text-foreground font-semibold">{view.month}</span>
+            </>
+          )}
+        </div>
+      )}
+
+      {view.step === "years" && <YearsView onSelect={(year) => setView({ step: "categories", year })} />}
+      {view.step === "categories" && <CategoriesView year={view.year} onSelect={(cat) => {
+        if (view.year === 2028) return; // coming soon
+        setView({ step: "months", year: view.year, category: cat });
+      }} onBack={() => setView({ step: "years" })} />}
+      {view.step === "months" && <MonthsView year={view.year} category={view.category} onSelect={(month) => setView({ step: "weeks", year: view.year, category: view.category, month })} onBack={() => setView({ step: "categories", year: view.year })} />}
+      {view.step === "weeks" && <WeeksView year={view.year} category={view.category} month={view.month} onBack={() => setView({ step: "months", year: view.year, category: view.category })} />}
+    </div>
+  );
+}
+
+function YearsView({ onSelect }: { onSelect: (year: number) => void }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      {years.map((year, i) => {
+        const meta = yearMeta[year] || { alDate: `August ${year}`, status: "Active", color: "gradient-primary" };
+        const isComingSoon = meta.status === "Coming Soon";
+        return (
+          <div
+            key={year}
+            onClick={() => onSelect(year)}
+            className={`${meta.color} rounded-2xl p-6 text-primary-foreground cursor-pointer hover-lift animate-fade-in-up group relative overflow-hidden`}
+            style={{ animationDelay: `${i * 0.1}s` }}
+          >
+            {/* Decorative shapes */}
+            <svg className="absolute top-3 right-3 w-16 h-16 text-primary-foreground/[0.08] animate-float-slow" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="2" />
+            </svg>
+            <span className="absolute bottom-2 right-4 text-primary-foreground/[0.06] font-display text-xs" aria-hidden="true">∫ Σ π</span>
+
+            <div className="relative z-10">
+              <GraduationCap className="h-10 w-10 mb-3 transition-transform duration-300 group-hover:scale-110" />
+              <h3 className="text-2xl font-display font-bold mb-1">{year} A/L</h3>
+              <div className="flex items-center gap-2 text-sm text-primary-foreground/80 mb-3">
+                <Calendar className="h-4 w-4" />
+                <span>{meta.alDate}</span>
+              </div>
+              {isComingSoon ? (
+                <Badge className="bg-primary-foreground/20 text-primary-foreground border-0">
+                  <Sparkles className="h-3 w-3 mr-1" /> Coming Soon
+                </Badge>
+              ) : (
+                <Badge className="bg-primary-foreground/20 text-primary-foreground border-0">
+                  <TrendingUp className="h-3 w-3 mr-1" /> {meta.status}
+                </Badge>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function CategoriesView({ year, onSelect, onBack }: { year: number; onSelect: (cat: string) => void; onBack: () => void }) {
+  const isComingSoon = year === 2028;
+
+  return (
+    <div className="space-y-6 animate-fade-in-up">
+      <button onClick={onBack} className="flex items-center gap-2 text-sm text-primary hover:underline font-medium">
+        <ArrowLeft className="h-4 w-4" /> Back to Years
+      </button>
+
+      {isComingSoon && (
+        <div className="bg-warning/10 border border-warning/30 rounded-2xl p-8 text-center animate-fade-in-up">
+          <Sparkles className="h-12 w-12 text-warning mx-auto mb-3 animate-pulse-soft" />
+          <h2 className="text-2xl font-display font-bold text-foreground mb-2">Coming Soon!</h2>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Content for {year} A/L is currently being prepared. Stay tuned for structured theory, paper classes, and revision materials. We'll notify you when it's available!
+          </p>
+          <div className="flex items-center justify-center gap-2 mt-4 text-sm text-warning font-medium">
+            <Clock className="h-4 w-4" />
+            Expected availability: Early {year - 1}
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        {categories.map((cat, i) => (
+          <div
+            key={cat.key}
+            onClick={() => !isComingSoon && onSelect(cat.key)}
+            className={`${cat.gradient} rounded-2xl p-6 text-primary-foreground hover-lift animate-fade-in-up group relative overflow-hidden ${isComingSoon ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+            style={{ animationDelay: `${i * 0.1}s` }}
+          >
+            <svg className="absolute bottom-2 right-2 w-12 h-12 text-primary-foreground/[0.06]" viewBox="0 0 100 100">
+              <polygon points="50,10 90,90 10,90" fill="none" stroke="currentColor" strokeWidth="2" />
+            </svg>
+            <cat.icon className="h-10 w-10 mb-3 transition-transform duration-300 group-hover:scale-110" />
+            <h3 className="text-lg font-display font-bold mb-1">{cat.label}</h3>
+            <p className="text-sm text-primary-foreground/80 leading-relaxed">{cat.description}</p>
+            {isComingSoon && (
+              <div className="absolute inset-0 flex items-center justify-center bg-foreground/10 rounded-2xl">
+                <Lock className="h-8 w-8 text-primary-foreground/60" />
+              </div>
+            )}
           </div>
         ))}
       </div>
+    </div>
+  );
+}
 
-      {/* Year Tabs */}
-      <Tabs value={selectedYear} onValueChange={setSelectedYear}>
-        <TabsList className="w-full mb-6">
-          {years.map((y) => (
-            <TabsTrigger key={y} value={String(y)} className="flex-1 font-display">
-              {y} A/L
-            </TabsTrigger>
-          ))}
-        </TabsList>
+function MonthsView({ year, category, onSelect, onBack }: { year: number; category: string; onSelect: (month: string) => void; onBack: () => void }) {
+  const currentMonth = new Date().getMonth(); // 0-indexed
+  // Sort months: current month first, then upcoming, then past
+  const sortedMonths = [...MONTHS].sort((a, b) => {
+    const ai = MONTHS.indexOf(a);
+    const bi = MONTHS.indexOf(b);
+    const da = (ai - currentMonth + 12) % 12;
+    const db = (bi - currentMonth + 12) % 12;
+    return da - db;
+  });
 
-        <TabsContent value={selectedYear}>
-          {/* Category Cards */}
-          <div className="grid grid-cols-3 gap-3 mb-6">
-            {[
-              { icon: BookOpen, label: "Theory Classes", color: "gradient-primary" },
-              { icon: FileText, label: "Paper Classes", color: "gradient-accent" },
-              { icon: Video, label: "Revision Classes", color: "bg-warning" },
-            ].map((c, i) => (
-              <div
-                key={c.label}
-                className={`${c.color} rounded-xl p-4 text-center text-primary-foreground hover-lift cursor-pointer animate-fade-in-up group`}
-                style={{ animationDelay: `${i * 0.1}s` }}
-              >
-                <c.icon className="h-6 w-6 mx-auto mb-2 transition-transform duration-300 group-hover:scale-110" />
-                <span className="text-xs font-semibold">{c.label}</span>
+  // Mock progress per month
+  const getProgress = (month: string) => {
+    const idx = MONTHS.indexOf(month);
+    if (idx < currentMonth) return Math.floor(70 + Math.random() * 30);
+    if (idx === currentMonth) return Math.floor(30 + Math.random() * 40);
+    return 0;
+  };
+
+  const catLabel = categories.find(c => c.key === category)?.label || category;
+
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <button onClick={onBack} className="flex items-center gap-2 text-sm text-primary hover:underline font-medium">
+        <ArrowLeft className="h-4 w-4" /> Back to {year} A/L
+      </button>
+
+      <div className="bg-card rounded-xl border border-border p-4 flex items-center justify-between">
+        <div>
+          <h2 className="font-display font-bold text-lg text-foreground">{catLabel}</h2>
+          <p className="text-sm text-muted-foreground">{year} A/L · Select a month</p>
+        </div>
+        <div className="text-right">
+          <p className="text-xs text-muted-foreground">Overall Progress</p>
+          <p className="text-lg font-display font-bold text-primary">64%</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {sortedMonths.map((month, i) => {
+          const isCurrent = MONTHS.indexOf(month) === currentMonth;
+          const progress = getProgress(month);
+          return (
+            <div
+              key={month}
+              onClick={() => onSelect(month)}
+              className={`bg-card rounded-xl border p-4 cursor-pointer hover-lift animate-fade-in-up transition-all group ${
+                isCurrent ? "border-primary shadow-md ring-2 ring-primary/20" : "border-border"
+              }`}
+              style={{ animationDelay: `${i * 0.04}s` }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-display font-semibold text-foreground flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-primary" />
+                  {month}
+                </h3>
+                {isCurrent && (
+                  <Badge className="bg-primary text-primary-foreground text-xs">Current</Badge>
+                )}
               </div>
-            ))}
-          </div>
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Progress</span>
+                  <span className="font-semibold text-foreground">{progress}%</span>
+                </div>
+                <Progress value={progress} className="h-2" />
+              </div>
+              <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
+                <span>4 weeks</span>
+                <ChevronRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
-          {/* Month Accordion */}
-          <Accordion type="single" collapsible className="space-y-2">
-            {yearContent.months.map((month: any, mi: number) => (
-              <AccordionItem
-                key={month.month}
-                value={month.month}
-                className="bg-card rounded-xl border border-border overflow-hidden animate-fade-in-up"
-                style={{ animationDelay: `${mi * 0.05}s` }}
-              >
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <span className="font-display font-semibold text-foreground">{month.month}</span>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4">
-                  <div className="space-y-4">
-                    {month.weeks.map((week: any) => (
-                      <WeekCard key={week.week} week={week} />
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </TabsContent>
-      </Tabs>
+function WeeksView({ year, category, month, onBack }: { year: number; category: string; month: string; onBack: () => void }) {
+  const yearContent = generateYearContent(year);
+  const monthData = yearContent.months.find(m => m.month === month);
+
+  if (!monthData) return null;
+
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <button onClick={onBack} className="flex items-center gap-2 text-sm text-primary hover:underline font-medium">
+        <ArrowLeft className="h-4 w-4" /> Back to Months
+      </button>
+
+      <div className="bg-card rounded-xl border border-border p-4">
+        <h2 className="font-display font-bold text-lg text-foreground">{month} — {year} A/L</h2>
+        <p className="text-sm text-muted-foreground capitalize">{category} Classes</p>
+      </div>
+
+      <Accordion type="single" collapsible className="space-y-2">
+        {monthData.weeks.map((week, mi) => (
+          <AccordionItem
+            key={week.week}
+            value={`week-${week.week}`}
+            className="bg-card rounded-xl border border-border overflow-hidden animate-fade-in-up"
+            style={{ animationDelay: `${mi * 0.05}s` }}
+          >
+            <AccordionTrigger className="px-4 py-3 hover:no-underline">
+              <span className="font-display font-semibold text-foreground flex items-center gap-2">
+                <span className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                  {week.week}
+                </span>
+                Week {week.week}
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4">
+              <WeekCard week={week} />
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 }
@@ -303,13 +508,7 @@ function WeekCard({ week }: { week: any }) {
   const [showVideo, setShowVideo] = useState(false);
 
   return (
-    <div className="border border-border rounded-lg p-4 hover:border-primary/30 transition-colors">
-      <h4 className="font-display font-semibold text-sm text-primary mb-3 flex items-center gap-2">
-        <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-          {week.week}
-        </span>
-        Week {week.week}
-      </h4>
+    <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Paper */}
         <div className="bg-muted/50 rounded-lg p-3 hover:bg-muted/80 transition-colors">

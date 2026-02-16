@@ -6,6 +6,7 @@ import uniPeradeniya from "@/assets/uni-peradeniya.jpg";
 import uniRuhuna from "@/assets/uni-ruhuna.jpg";
 import uniSjp from "@/assets/uni-sjp.jpg";
 import uniOpen from "@/assets/uni-open.jpg";
+import uniJaffna from "@/assets/uni-jaffna.jpg";
 
 const uniImages: Record<string, string> = {
   "University of Moratuwa": uniMoratuwa,
@@ -13,6 +14,7 @@ const uniImages: Record<string, string> = {
   "University of Ruhuna": uniRuhuna,
   "University of Sri Jayewardenepura": uniSjp,
   "Open University of Sri Lanka": uniOpen,
+  "University of Jaffna": uniJaffna,
 };
 
 export default function UniversitiesSection() {

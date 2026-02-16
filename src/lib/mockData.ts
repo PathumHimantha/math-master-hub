@@ -98,7 +98,7 @@ export function generateYearContent(year: number): YearContent {
   };
 }
 
-export const years = [2027, 2026, 2025];
+export const years = [2028, 2027, 2026];
 
 export const courseHighlights = [
   { title: "Pure Mathematics", description: "Algebra, Calculus, Trigonometry and more", icon: "function-square" },
@@ -144,6 +144,13 @@ export const universities = [
     location: "Nawala, Colombo",
     description: "Flexible engineering programs for distance learners across the island.",
     badge: "Flexible Learning",
+  },
+  {
+    name: "University of Jaffna",
+    faculty: "Engineering Faculty",
+    location: "Thirunelvely, Jaffna",
+    description: "Northern region's premier university with a growing engineering faculty and research programs.",
+    badge: "Northern Pride",
   },
 ];
 

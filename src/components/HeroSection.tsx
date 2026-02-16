@@ -1,25 +1,17 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import MathBackground from "@/components/MathBackground";
+import heroImg from "@/assets/hero-engineer.jpg";
 
 export default function HeroSection() {
   return (
     <section className="relative min-h-[85vh] flex items-center overflow-hidden gradient-hero text-primary-foreground">
-      <div className="absolute inset-0 math-grid-bg opacity-20" />
-      <MathBackground />
-      
-      {/* Geometric decorations */}
-      <svg className="absolute top-[10%] right-[5%] w-32 h-32 text-primary-foreground/[0.06] animate-float" viewBox="0 0 100 100" aria-hidden="true">
-        <polygon points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-      <svg className="absolute bottom-[15%] right-[20%] w-24 h-24 text-primary-foreground/[0.05] animate-float-slow" viewBox="0 0 100 100" aria-hidden="true">
-        <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="1.5" />
-        <line x1="50" y1="10" x2="50" y2="90" stroke="currentColor" strokeWidth="0.5" />
-        <line x1="10" y1="50" x2="90" y2="50" stroke="currentColor" strokeWidth="0.5" />
-      </svg>
-      <svg className="absolute top-[55%] left-[60%] w-20 h-20 text-primary-foreground/[0.04] animate-float" style={{ animationDelay: '2s' }} viewBox="0 0 100 100" aria-hidden="true">
-        <polygon points="50,10 90,90 10,90" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
+      {/* Hero image on the right */}
+      <div className="absolute inset-0 flex justify-end">
+        <div className="hidden md:block w-1/2 h-full relative">
+          <img src={heroImg} alt="Engineering student studying mathematics" className="w-full h-full object-cover opacity-30" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(224,76%,28%)] to-transparent" />
+        </div>
+      </div>
 
       {/* Floating equations */}
       <span className="absolute top-[20%] right-[12%] text-primary-foreground/[0.08] font-display text-lg animate-float-slow hidden md:block" aria-hidden="true">
@@ -54,7 +46,7 @@ export default function HeroSection() {
               </Button>
             </Link>
             <Link to="/login">
-              <Button size="lg"  className="w-full sm:w-auto border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 font-semibold text-base px-8 bg-primary-foreground/10">
+              <Button size="lg" className="w-full sm:w-auto border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 font-semibold text-base px-8 bg-primary-foreground/10">
                 Student Login
               </Button>
             </Link>

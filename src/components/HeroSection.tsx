@@ -37,7 +37,7 @@ export default function HeroSection() {
             <span className="text-warning">With Confidence</span>
           </h1>
           <p className="text-lg sm:text-xl text-primary-foreground/80 mb-8 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-            Prepare for your university engineering dreams with structured theory, past papers, and guided practice.
+          අනාගත ඉංජිනේරුවන් තැනීම උදෙසා වූ නූතන අරගලය
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
             <Link to="/register">
@@ -57,7 +57,7 @@ export default function HeroSection() {
             {[
               { value: "500+", label: "Students" },
               { value: "95%", label: "Pass Rate" },
-              { value: "10+", label: "Years Exp" },
+              { value: "5+", label: "Years Exp" },
             ].map((s) => (
               <div key={s.label} className="text-center">
                 <div className="text-2xl sm:text-3xl font-display font-bold text-warning">{s.value}</div>

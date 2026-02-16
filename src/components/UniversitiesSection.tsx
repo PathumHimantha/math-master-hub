@@ -9,12 +9,12 @@ import uniOpen from "@/assets/uni-open.jpg";
 import uniJaffna from "@/assets/uni-jaffna.jpg";
 
 const uniImages: Record<string, string> = {
-  "University of Moratuwa": uniMoratuwa,
-  "University of Peradeniya": uniPeradeniya,
-  "University of Ruhuna": uniRuhuna,
-  "University of Sri Jayewardenepura": uniSjp,
-  "Open University of Sri Lanka": uniOpen,
-  "University of Jaffna": uniJaffna,
+  "University of Moratuwa": "https://unitoday.lk/wp-content/uploads/2024/12/moratuwa.jpg",
+  "University of Peradeniya": "https://eng.pdn.ac.lk/wp-content/uploads/2022/12/slide-4.jpg",
+  "University of Ruhuna": "https://hss.ruh.ac.lk/assets/img/2.jpg",
+  "University of Sri Jayewardenepura": "https://must.edu.my/wp-content/uploads/2024/06/University-of-Sri-Jayewardenepura.jpg",
+  "Open University of Sri Lanka": "https://static.where-e.com/Sri_Lanka/Western_Province/Colombo/The-Open-University-Of-Sri-Lanka_918dca47c06999affda3b43cc0d765e6.jpg",
+  "University of Jaffna": "https://jfn.ac.lk/wp-content/uploads/2024/10/New-Entrance-5-scaled.jpg",
 };
 
 export default function UniversitiesSection() {

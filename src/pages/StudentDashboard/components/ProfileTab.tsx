@@ -46,7 +46,7 @@ export default function ProfileTab({ user }: ProfileTabProps) {
     .toUpperCase();
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-fade-in-up">
+    <div className=" mx-auto space-y-6 animate-fade-in-up">
       {/* Simple Profile Header */}
       <div className="bg-card rounded-xl border border-border p-6">
         <div className="flex items-center gap-4">

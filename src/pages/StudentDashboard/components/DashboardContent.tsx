@@ -164,6 +164,7 @@ export default function DashboardContent({
       {view.step === "years" && <StudentMatrix />}
       {/* Show StudentMatrix only when on categories view */}
       {view.step === "categories" && <StudentMatrix />}
+      {view.step === "categories" && <StudentMatrix />}
     </div>
   );
 }

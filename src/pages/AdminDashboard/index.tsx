@@ -8,6 +8,7 @@ import AdminOverview from "./components/AdminOverview";
 import StudentsPage from "./components/StudentsPage";
 import ContentPage from "./components/ContentPage";
 import PlaceholderPage from "./components/PlaceholderPage";
+import PapersPage from "./components/PapersPage";
 
 export default function AdminDashboard() {
   const { isAdmin, logout } = useAuth();
@@ -30,6 +31,8 @@ export default function AdminDashboard() {
         return <StudentsPage />;
       case "Content":
         return <ContentPage />;
+      case "Papers": // Add this case
+        return <PapersPage />;
       case "Years":
       case "Papers":
       case "Videos":

@@ -9,4 +9,5 @@ export const API_ENDPOINTS = {
   PAPERS: `${API_BASE_URL}/maths/api/papers`,
   TUTES: `${API_BASE_URL}/maths/api/tutes`,
   VIDEOS: `${API_BASE_URL}/maths/api/videos`,
+  STUDENTS: `${API_BASE_URL}/maths/api/students`,
 };

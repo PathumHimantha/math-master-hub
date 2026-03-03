@@ -9,6 +9,7 @@ import StudentsPage from "./components/StudentsPage";
 import ContentPage from "./components/ContentPage";
 import PlaceholderPage from "./components/PlaceholderPage";
 import PapersPage from "./components/PapersPage";
+import VideoAccessManager from "./components/VideoAccessManager";
 
 export default function AdminDashboard() {
   const { isAdmin, logout } = useAuth();
@@ -33,10 +34,11 @@ export default function AdminDashboard() {
         return <ContentPage />;
       case "Papers": // Add this case
         return <PapersPage />;
+      case "Access":
+        return <VideoAccessManager />;
       case "Years":
       case "Papers":
       case "Videos":
-      case "Access":
         return <PlaceholderPage title={activeTab} />;
       default:
         return null;

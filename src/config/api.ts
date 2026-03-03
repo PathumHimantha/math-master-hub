@@ -11,4 +11,17 @@ export const API_ENDPOINTS = {
   VIDEOS: `${API_BASE_URL}/maths/api/videos`,
   STUDENTS: `${API_BASE_URL}/maths/api/students`,
   MATRIX: `${API_BASE_URL}/maths/api/get_class_matrix`,
+  VIDEO_ACCESS: `${API_BASE_URL}/maths/api/video-access`,
+  VIDEO_ACCESS_BULK: `${API_BASE_URL}/maths/api/video-access/bulk`,
+  VIDEO_ACCESS_BY_STUDENT: (userId: number | string) =>
+    `${API_BASE_URL}/maths/api/video-access/student/${userId}`,
+  VIDEO_ACCESS_BY_VIDEO: (videoId: number | string) =>
+    `${API_BASE_URL}/maths/api/video-access/video/${videoId}`,
+  VIDEO_ACCESS_TOGGLE: (id: number | string) =>
+    `${API_BASE_URL}/maths/api/video-access/${id}/toggle`,
+  VIDEO_ACCESS_STATUS: (id: number | string) =>
+    `${API_BASE_URL}/maths/api/video-access/${id}/status`,
+  VIDEO_ACCESS_DELETE: (id: number | string) =>
+    `${API_BASE_URL}/maths/api/video-access/${id}`,
+  VIDEO_ACCESS_REVOKE: `${API_BASE_URL}/maths/api/video-access/revoke`,
 };

@@ -13,6 +13,7 @@ interface WeeksViewProps {
   category: string;
   month: string;
   onBack: () => void;
+  userId: string; // Add this
 }
 
 export default function WeeksView({
@@ -20,6 +21,7 @@ export default function WeeksView({
   category,
   month,
   onBack,
+  userId, // Add this
 }: WeeksViewProps) {
   const yearContent = generateYearContent(year);
   const monthData = yearContent.months.find((m) => m.month === month);
@@ -61,7 +63,17 @@ export default function WeeksView({
               </span>
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4">
-              <WeekCard week={week} />
+              <WeekCard
+                week={{
+                  id: week.week.toString(),
+                  name: `Week ${week.week}`,
+                  year: year.toString(),
+                  month: month,
+                  week: `Week ${week.week}`,
+                  category: category,
+                }}
+                userId={userId}
+              />
             </AccordionContent>
           </AccordionItem>
         ))}

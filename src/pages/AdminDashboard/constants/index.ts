@@ -16,6 +16,7 @@ export const sidebarItems: SidebarItem[] = [
   { icon: BookOpen, label: "Content" },
   { icon: FileText, label: "Papers" },
   { icon: Video, label: "Videos" },
+  { icon: Shield, label: "Tutes" },
   { icon: Shield, label: "Access" },
 ];
 

@@ -175,11 +175,13 @@ export default function VideoAccessManager() {
     }
   };
 
+  // In VideoAccessManager.tsx, update the grantAccess function:
+
   const grantAccess = async (userId: number) => {
     if (!selectedVideo) return;
 
     try {
-      const response = await fetch(API_ENDPOINTS.VIDEO_ACCESS_GRANT, {
+      const response = await fetch(API_ENDPOINTS.VIDEO_ACCESS, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -201,6 +203,8 @@ export default function VideoAccessManager() {
       toast.error("Network error");
     }
   };
+
+  // Update the revokeAccess function:
 
   const revokeAccess = async (accessId: number) => {
     try {
@@ -228,6 +232,8 @@ export default function VideoAccessManager() {
       toast.error("Network error");
     }
   };
+
+  // Update the bulkGrantAccess function:
 
   const bulkGrantAccess = async () => {
     if (!selectedVideo || selectedStudents.length === 0) return;
@@ -259,7 +265,6 @@ export default function VideoAccessManager() {
       setLoading((prev) => ({ ...prev, grant: false }));
     }
   };
-
   // Check if a student has access to selected video
   const hasAccess = (studentId: number): boolean => {
     if (!selectedVideo) return false;

@@ -157,6 +157,7 @@ export default function DashboardContent({
               category: view.category,
             })
           }
+          userId={user.id} // Add this line
         />
       )}
 

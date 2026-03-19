@@ -47,10 +47,13 @@ export default function TuteUpload({ year, month, week }: TuteUploadProps) {
 
     setUploading(true);
     const formData = new FormData();
-    formData.append("title", `${title} - ${month} ${week}`);
+    formData.append("title", title); // Remove the month/week concat here
     formData.append("category", category);
     formData.append("description", description);
     formData.append("file", file);
+    formData.append("year", year); // ✅ Add these three
+    formData.append("month", month); // ✅
+    formData.append("week", week); // ✅
 
     try {
       const response = await fetch(API_ENDPOINTS.TUTES, {

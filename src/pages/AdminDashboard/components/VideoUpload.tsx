@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, Video, X, CheckCircle2 } from "lucide-react";
 import { API_ENDPOINTS } from "@/config/api";
 import { toast } from "sonner";
 
@@ -25,48 +24,43 @@ export default function VideoUpload({ year, month, week }: VideoUploadProps) {
   const [title, setTitle] = useState("");
   const [duration, setDuration] = useState("");
   const [category, setCategory] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [videoUrl, setVideoUrl] = useState("");
   const [uploading, setUploading] = useState(false);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile && selectedFile.type.startsWith("video/")) {
-      setFile(selectedFile);
-    } else {
-      toast.error("Please select a video file");
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file || !title || !duration || !category) {
+    if (!title || !duration || !category || !videoUrl) {
       toast.error("Please fill all fields");
       return;
     }
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append("title", `${title} - ${month} ${week}`);
-    formData.append("duration", duration);
-    formData.append("category", category);
-    formData.append("file", file);
-
     try {
       const response = await fetch(API_ENDPOINTS.VIDEOS, {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          duration: parseInt(duration),
+          category,
+          video_url: videoUrl,
+          year,
+          month,
+          week,
+        }),
       });
 
       if (response.ok) {
-        toast.success("Video uploaded successfully");
+        toast.success("Video added successfully");
         setTitle("");
         setDuration("");
         setCategory("");
-        setFile(null);
+        setVideoUrl("");
       } else {
-        toast.error("Upload failed");
+        const err = await response.json();
+        toast.error(err.message || "Failed to add video");
       }
-    } catch (error) {
+    } catch {
       toast.error("Network error");
     } finally {
       setUploading(false);
@@ -81,6 +75,16 @@ export default function VideoUpload({ year, month, week }: VideoUploadProps) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g., Integration by Parts"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Video URL</Label>
+        <Input
+          value={videoUrl}
+          onChange={(e) => setVideoUrl(e.target.value)}
+          placeholder="https://youtube.com/watch?v=... or direct URL"
+          type="url"
         />
       </div>
 
@@ -112,50 +116,8 @@ export default function VideoUpload({ year, month, week }: VideoUploadProps) {
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label>Video File</Label>
-        <div className="border-2 border-dashed rounded-lg p-4">
-          {!file ? (
-            <div className="text-center">
-              <input
-                type="file"
-                accept="video/*"
-                onChange={handleFileChange}
-                className="hidden"
-                id="video-file"
-              />
-              <label
-                htmlFor="video-file"
-                className="cursor-pointer flex flex-col items-center"
-              >
-                <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                <span className="text-sm text-muted-foreground">
-                  Click to upload video
-                </span>
-              </label>
-            </div>
-          ) : (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Video className="h-4 w-4 text-warning" />
-                <span className="text-sm truncate">{file.name}</span>
-                <CheckCircle2 className="h-4 w-4 text-success" />
-              </div>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setFile(null)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-
       <Button type="submit" disabled={uploading} className="w-full">
-        {uploading ? "Uploading..." : "Upload Video"}
+        {uploading ? "Adding..." : "Add Video"}
       </Button>
     </form>
   );
